@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المكتبة</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-book"></i> مكتبتي</h2>
+                <button id="toggle-sidebar" class="toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="admin-info">
+                    <img src="https://via.placeholder.com/80" alt="صورة المدير" class="admin-img">
+                    <div class="admin-details">
+                        <h3>أحمد محمد</h3>
+                        <p>مدير المكتبة</p>
+                    </div>
+                </div>
+                <nav class="sidebar-menu">
+                    <ul>
+                        <li class="active" data-page="dashboard">
+                            <a href="#"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+                        </li>
+                        <li data-page="books">
+                            <a href="#"><i class="fas fa-book"></i> الكتب</a>
+                        </li>
+                        <li data-page="users">
+                            <a href="#"><i class="fas fa-users"></i> المستخدمين</a>
+                        </li>
+                        <li data-page="borrowing">
+                            <a href="#"><i class="fas fa-exchange-alt"></i> الإعارة</a>
+                        </li>
+                        <li data-page="reports">
+                            <a href="#"><i class="fas fa-chart-bar"></i> التقارير</a>
+                        </li>
+                        <li data-page="settings">
+                            <a href="#"><i class="fas fa-cog"></i> الإعدادات</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="search-container">
+                    <input type="text" placeholder="بحث..." class="search-input">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="message-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1>لوحة التحكم</h1>
+                    <p>مرحباً بك في لوحة تحكم المكتبة</p>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon books-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>إجمالي الكتب</h3>
+                            <p class="stat-number">2,845</p>
+                            <p class="stat-change positive">+24 هذا الشهر</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon users-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>المستخدمين النشطين</h3>
+                            <p class="stat-number">573</p>
+                            <p class="stat-change positive">+18 هذا الشهر</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon borrowed-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>الكتب المعارة</h3>
+                            <p class="stat-number">432</p>
+                            <p class="stat-change positive">+87 هذا الشهر</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon overdue-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>متأخرة عن الإرجاع</h3>
+                            <p class="stat-number">24</p>
+                            <p class="stat-change negative">-3 من الأسبوع الماضي</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>نشاط الإعارة الشهري</h3>
+                        </div>
+                        <div class="chart">
+                            <canvas id="borrowingChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>أكثر الكتب إعارة</h3>
+                        </div>
+                        <div class="top-books">
+                            <div class="top-book-item">
+                                <div class="book-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="book-details">
+                                    <h4>الخيميائي</h4>
+                                    <p>باولو كويلو</p>
+                                </div>
+                                <div class="book-stats">
+                                    <p>42 إعارة</p>
+                                    <p class="book-status available">متاح</p>
+                                </div>
+                            </div>
+                            <div class="top-book-item">
+                                <div class="book-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="book-details">
+                                    <h4>1984</h4>
+                                    <p>جورج أورويل</p>
+                                </div>
+                                <div class="book-stats">
+                                    <p>38 إعارة</p>
+                                    <p class="book-status unavailable">غير متاح</p>
+                                </div>
+                            </div>
+                            <div class="top-book-item">
+                                <div class="book-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="book-details">
+                                    <h4>أن تقتل طائراً بريئاً</h4>
+                                    <p>هاربر لي</p>
+                                </div>
+                                <div class="book-stats">
+                                    <p>35 إعارة</p>
+                                    <p class="book-status available">متاح</p>
+                                </div>
+                            </div>
+                            <div class="top-book-item">
+                                <div class="book-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="book-details">
+                                    <h4>جاتسبي العظيم</h4>
+                                    <p>ف. سكوت فيتزجيرالد</p>
+                                </div>
+                                <div class="book-stats">
+                                    <p>32 إعارة</p>
+                                    <p class="book-status available">متاح</p>
+                                </div>
+                            </div>
+                            <div class="top-book-item">
+                                <div class="book-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="book-details">
+                                    <h4>كبرياء وتحامل</h4>
+                                    <p>جين أوستن</p>
+                                </div>
+                                <div class="book-stats">
+                                    <p>30 إعارة</p>
+                                    <p class="book-status available">متاح</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <div class="section-header">
+                        <h3>أحدث نشاطات الإعارة</h3>
+                    </div>
+                    <div class="activity-table-container">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>المستخدم</th>
+                                    <th>الكتاب</th>
+                                    <th>الحالة</th>
+                                    <th>التاريخ</th>
+                                    <th>تاريخ الإرجاع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                            <div>
+                                                <p class="user-name">أحمد حسن</p>
+                                                <p class="user-email">ahmed@example.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>الخيميائي</td>
+                                    <td><span class="status borrowed">معار</span></td>
+                                    <td>2023-03-01</td>
+                                    <td>2023-03-15</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                            <div>
+                                                <p class="user-name">فاطمة علي</p>
+                                                <p class="user-email">fatima@example.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>1984</td>
+                                    <td><span class="status returned">مرجع</span></td>
+                                    <td>2023-02-28</td>
+                                    <td>2023-03-14</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                            <div>
+                                                <p class="user-name">محمد خالد</p>
+                                                <p class="user-email">mohammed@example.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>أن تقتل طائراً بريئاً</td>
+                                    <td><span class="status borrowed">معار</span></td>
+                                    <td>2023-02-27</td>
+                                    <td>2023-03-13</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                            <div>
+                                                <p class="user-name">ليلى إبراهيم</p>
+                                                <p class="user-email">layla@example.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>جاتسبي العظيم</td>
+                                    <td><span class="status overdue">متأخر</span></td>
+                                    <td>2023-02-15</td>
+                                    <td>2023-03-01</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                            <div>
+                                                <p class="user-name">عمر فاروق</p>
+                                                <p class="user-email">omar@example.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>كبرياء وتحامل</td>
+                                    <td><span class="status returned">مرجع</span></td>
+                                    <td>2023-02-25</td>
+                                    <td>2023-03-11</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Books Page -->
+            <section id="books" class="page">
+                <div class="page-header">
+                    <h1>إدارة الكتب</h1>
+                    <button class="add-btn" id="add-book-btn"><i class="fas fa-plus"></i> إضافة كتاب</button>
+                </div>
+
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label for="category-filter">التصنيف:</label>
+                        <select id="category-filter" class="filter-select">
+                            <option value="all">الكل</option>
+                            <option value="fiction">روايات</option>
+                            <option value="science">علوم</option>
+                            <option value="history">تاريخ</option>
+                            <option value="philosophy">فلسفة</option>
+                            <option value="psychology">علم نفس</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="status-filter">الحالة:</label>
+                        <select id="status-filter" class="filter-select">
+                            <option value="all">الكل</option>
+                            <option value="available">متاح</option>
+                            <option value="borrowed">معار</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort-by">ترتيب حسب:</label>
+                        <select id="sort-by" class="filter-select">
+                            <option value="title">العنوان</option>
+                            <option value="author">المؤلف</option>
+                            <option value="date">تاريخ الإضافة</option>
+                            <option value="popularity">الشعبية</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="books-container">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="select-all-books">
+                                </th>
+                                <th>العنوان</th>
+                                <th>المؤلف</th>
+                                <th>التصنيف</th>
+                                <th>الرقم المرجعي</th>
+                                <th>الحالة</th>
+                                <th>تاريخ الإضافة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>الخيميائي</td>
+                                <td>باولو كويلو</td>
+                                <td>روايات</td>
+                                <td>FIC-001</td>
+                                <td><span class="status available">متاح</span></td>
+                                <td>2023-01-15</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>1984</td>
+                                <td>جورج أورويل</td>
+                                <td>روايات</td>
+                                <td>FIC-002</td>
+                                <td><span class="status borrowed">معار</span></td>
+                                <td>2023-01-18</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>أن تقتل طائراً بريئاً</td>
+                                <td>هاربر لي</td>
+                                <td>روايات</td>
+                                <td>FIC-003</td>
+                                <td><span class="status available">متاح</span></td>
+                                <td>2023-01-20</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>موجز تاريخ الزمن</td>
+                                <td>ستيفن هوكينج</td>
+                                <td>علوم</td>
+                                <td>SCI-001</td>
+                                <td><span class="status available">متاح</span></td>
+                                <td>2023-01-22</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>العقد الاجتماعي</td>
+                                <td>جان جاك روسو</td>
+                                <td>فلسفة</td>
+                                <td>PHIL-001</td>
+                                <td><span class="status borrowed">معار</span></td>
+                                <td>2023-01-25</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>العادات السبع للناس الأكثر فعالية</td>
+                                <td>ستيفن كوفي</td>
+                                <td>تطوير ذاتي</td>
+                                <td>SELF-001</td>
+                                <td><span class="status available">متاح</span></td>
+                                <td>2023-01-28</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="book-checkbox"></td>
+                                <td>فن الحرب</td>
+                                <td>سون تزو</td>
+                                <td>تاريخ</td>
+                                <td>HIST-001</td>
+                                <td><span class="status available">متاح</span></td>
+                                <td>2023-01-30</td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="pagination-btn prev-btn"><i class="fas fa-chevron-right"></i></button>
+                    <div class="pagination-numbers">
+                        <button class="pagination-number active">1</button>
+                        <button class="pagination-number">2</button>
+                        <button class="pagination-number">3</button>
+                        <span class="pagination-ellipsis">...</span>
+                        <button class="pagination-number">10</button>
+                    </div>
+                    <button class="pagination-btn next-btn"><i class="fas fa-chevron-left"></i></button>
+                </div>
+            </section>
+
+            <!-- Users Page -->
+            <section id="users" class="page">
+                <div class="page-header">
+                    <h1>إدارة المستخدمين</h1>
+                    <button class="add-btn" id="add-user-btn"><i class="fas fa-plus"></i> إضافة مستخدم</button>
+                </div>
+
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label for="user-type-filter">نوع المستخدم:</label>
+                        <select id="user-type-filter" class="filter-select">
+                            <option value="all">الكل</option>
+                            <option value="student">طالب</option>
+                            <option value="teacher">مدرس</option>
+                            <option value="staff">موظف</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="user-status-filter">الحالة:</label>
+                        <select id="user-status-filter" class="filter-select">
+                            <option value="all">الكل</option>
+                            <option value="active">نشط</option>
+                            <option value="inactive">غير نشط</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="user-sort-by">ترتيب حسب:</label>
+                        <select id="user-sort-by" class="filter-select">
+                            <option value="name">الاسم</option>
+                            <option value="date">تاريخ التسجيل</option>
+                            <option value="borrowings">عدد الإعارات</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="users-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="select-all-users">
+                                </th>
+                                <th>المستخدم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>رقم الهاتف</th>
+                                <th>نوع المستخدم</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="user-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>أحمد حسن</p>
+                                    </div>
+                                </td>
+                                <td>ahmed@example.com</td>
+                                <td>0123456789</td>
+                                <td>طالب</td>
+                                <td>2023-01-15</td>
+                                <td><span class="status active">نشط</span></td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="user-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>فاطمة علي</p>
+                                    </div>
+                                </td>
+                                <td>fatima@example.com</td>
+                                <td>0123456790</td>
+                                <td>مدرس</td>
+                                <td>2023-01-18</td>
+                                <td><span class="status active">نشط</span></td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="user-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>محمد خالد</p>
+                                    </div>
+                                </td>
+                                <td>mohammed@example.com</td>
+                                <td>0123456791</td>
+                                <td>طالب</td>
+                                <td>2023-01-20</td>
+                                <td><span class="status active">نشط</span></td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="user-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>ليلى إبراهيم</p>
+                                    </div>
+                                </td>
+                                <td>layla@example.com</td>
+                                <td>0123456792</td>
+                                <td>طالب</td>
+                                <td>2023-01-22</td>
+                                <td><span class="status inactive">غير نشط</span></td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="user-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>عمر فاروق</p>
+                                    </div>
+                                </td>
+                                <td>omar@example.com</td>
+                                <td>0123456793</td>
+                                <td>موظف</td>
+                                <td>2023-01-25</td>
+                                <td><span class="status active">نشط</span></td>
+                                <td class="actions">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="pagination-btn prev-btn"><i class="fas fa-chevron-right"></i></button>
+                    <div class="pagination-numbers">
+                        <button class="pagination-number active">1</button>
+                        <button class="pagination-number">2</button>
+                        <button class="pagination-number">3</button>
+                        <span class="pagination-ellipsis">...</span>
+                        <button class="pagination-number">8</button>
+                    </div>
+                    <button class="pagination-btn next-btn"><i class="fas fa-chevron-left"></i></button>
+                </div>
+            </section>
+
+            <!-- Borrowing Page -->
+            <section id="borrowing" class="page">
+                <div class="page-header">
+                    <h1>إدارة الإعارة</h1>
+                    <button class="add-btn" id="add-borrowing-btn"><i class="fas fa-plus"></i> إعارة جديدة</button>
+                </div>
+
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label for="borrowing-status-filter">الحالة:</label>
+                        <select id="borrowing-status-filter" class="filter-select">
+                            <option value="all">الكل</option>
+                            <option value="borrowed">معار</option>
+                            <option value="returned">مرجع</option>
+                            <option value="overdue">متأخر</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="borrowing-date-filter">تاريخ الإعارة:</label>
+                        <input type="date" id="borrowing-date-filter" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="borrowing-sort-by">ترتيب حسب:</label>
+                        <select id="borrowing-sort-by" class="filter-select">
+                            <option value="date">تاريخ الإعارة</option>
+                            <option value="due-date">تاريخ الإرجاع</option>
+                            <option value="user">المستخدم</option>
+                            <option value="book">الكتاب</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="borrowing-container">
+                    <table class="borrowing-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="select-all-borrowings">
+                                </th>
+                                <th>المستخدم</th>
+                                <th>الكتاب</th>
+                                <th>تاريخ الإعارة</th>
+                                <th>تاريخ الإرجاع المتوقع</th>
+                                <th>تاريخ الإرجاع الفعلي</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="borrowing-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>أحمد حسن</p>
+                                    </div>
+                                </td>
+                                <td>الخيميائي</td>
+                                <td>2023-03-01</td>
+                                <td>2023-03-15</td>
+                                <td>-</td>
+                                <td><span class="status borrowed">معار</span></td>
+                                <td class="actions">
+                                    <button class="action-btn return-btn"><i class="fas fa-undo"></i></button>
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="borrowing-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>فاطمة علي</p>
+                                    </div>
+                                </td>
+                                <td>1984</td>
+                                <td>2023-02-28</td>
+                                <td>2023-03-14</td>
+                                <td>2023-03-10</td>
+                                <td><span class="status returned">مرجع</span></td>
+                                <td class="actions">
+                                    <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="borrowing-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>محمد خالد</p>
+                                    </div>
+                                </td>
+                                <td>أن تقتل طائراً بريئاً</td>
+                                <td>2023-02-27</td>
+                                <td>2023-03-13</td>
+                                <td>-</td>
+                                <td><span class="status borrowed">معار</span></td>
+                                <td class="actions">
+                                    <button class="action-btn return-btn"><i class="fas fa-undo"></i></button>
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="borrowing-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>ليلى إبراهيم</p>
+                                    </div>
+                                </td>
+                                <td>جاتسبي العظيم</td>
+                                <td>2023-02-15</td>
+                                <td>2023-03-01</td>
+                                <td>-</td>
+                                <td><span class="status overdue">متأخر</span></td>
+                                <td class="actions">
+                                    <button class="action-btn return-btn"><i class="fas fa-undo"></i></button>
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="borrowing-checkbox"></td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/40" alt="صورة المستخدم">
+                                        <p>عمر فاروق</p>
+                                    </div>
+                                </td>
+                                <td>كبرياء وتحامل</td>
+                                <td>2023-02-25</td>
+                                <td>2023-03-11</td>
+                                <td>2023-03-09</td>
+                                <td><span class="status returned">مرجع</span></td>
+                                <td class="actions">
+                                    <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="pagination-btn prev-btn"><i class="fas fa-chevron-right"></i></button>
+                    <div class="pagination-numbers">
+                        <button class="pagination-number active">1</button>
+                        <button class="pagination-number">2</button>
+                        <button class="pagination-number">3</button>
+                        <span class="pagination-ellipsis">...</span>
+                        <button class="pagination-number">6</button>
+                    </div>
+                    <button class="pagination-btn next-btn"><i class="fas fa-chevron-left"></i></button>
+                </div>
+            </section>
+
+            <!-- Settings Page -->
+            <section id="settings" class="page">
+                <div class="page-header">
+                    <h1>الإعدادات</h1>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-card">
+                        <div class="settings-header">
+                            <h3>إعدادات المكتبة</h3>
+                        </div>
+                        <div class="settings-content">
+                            <form id="library-settings-form">
+                                <div class="form-group">
+                                    <label for="library-name">اسم المكتبة</label>
+                                    <input type="text" id="library-name" value="مكتبتي" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="library-address">العنوان</label>
+                                    <input type="text" id="library-address" value="شارع المكتبة، المدينة" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="library-email">البريد الإلكتروني</label>
+                                    <input type="email" id="library-email" value="info@library.com" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="library-phone">رقم الهاتف</label>
+                                    <input type="tel" id="library-phone" value="0123456789" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="library-website">الموقع الإلكتروني</label>
+                                    <input type="url" id="library-website" value="https://www.library.com" class="form-input">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn primary-btn">حفظ التغييرات</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <div class="settings-header">
+                            <h3>إعدادات الإعارة</h3>
+                        </div>
+                        <div class="settings-content">
+                            <form id="borrowing-settings-form">
+                                <div class="form-group">
+                                    <label for="max-books">الحد الأقصى للكتب المعارة للمستخدم</label>
+                                    <input type="number" id="max-books" value="5" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="loan-period">مدة الإعارة (بالأيام)</label>
+                                    <input type="number" id="loan-period" value="14" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fine-rate">معدل الغرامة اليومي للتأخير</label>
+                                    <input type="number" id="fine-rate" value="1" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="renewal-limit">الحد الأقصى لتجديد الإعارة</label>
+                                    <input type="number" id="renewal-limit" value="2" class="form-input">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn primary-btn">حفظ التغييرات</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <div class="settings-header">
+                            <h3>إعدادات الموقع</h3>
+                        </div>
+                        <div class="settings-content">
+                            <form id="website-settings-form">
+                                <div class="form-group">
+                                    <label for="site-title">عنوان الموقع</label>
+                                    <input type="text" id="site-title" value="مكتبتي - الموقع الرسمي" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="site-description">وصف الموقع</label>
+                                    <textarea id="site-description" class="form-textarea">مكتبتي هي مكتبة رقمية توفر مجموعة واسعة من الكتب للقراءة والإعارة.</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="site-logo">شعار الموقع</label>
+                                    <div class="file-input-container">
+                                        <input type="file" id="site-logo" class="file-input">
+                                        <label for="site-logo" class="file-input-label">اختر ملفاً</label>
+                                        <span class="file-name">logo.png</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="site-theme">سمة الموقع</label>
+                                    <select id="site-theme" class="form-select">
+                                        <option value="light">فاتح</option>
+                                        <option value="dark">داكن</option>
+                                        <option value="custom">مخصص</option>
+                                    </select>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn primary-btn">حفظ التغييرات</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Book Modal -->
+    <div id="add-book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>إضافة كتاب جديد</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-book-form">
+                    <div class="form-group">
+                        <label for="book-title">عنوان الكتاب</label>
+                        <input type="text" id="book-title" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-author">المؤلف</label>
+                        <input type="text" id="book-author" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-category">التصنيف</label>
+                        <select id="book-category" class="form-select" required>
+                            <option value="">اختر التصنيف</option>
+                            <option value="fiction">روايات</option>
+                            <option value="science">علوم</option>
+                            <option value="history">تاريخ</option>
+                            <option value="philosophy">فلسفة</option>
+                            <option value="psychology">علم نفس</option>
+                            <option value="self-help">تطوير ذاتي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-isbn">الرقم المعياري الدولي (ISBN)</label>
+                        <input type="text" id="book-isbn" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-publish-date">تاريخ النشر</label>
+                        <input type="date" id="book-publish-date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-pages">عدد الصفحات</label>
+                        <input type="number" id="book-pages" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-language">اللغة</label>
+                        <select id="book-language" class="form-select">
+                            <option value="arabic">العربية</option>
+                            <option value="english">الإنجليزية</option>
+                            <option value="french">الفرنسية</option>
+                            <option value="spanish">الإسبانية</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-cover">صورة الغلاف</label>
+                        <div class="file-input-container">
+                            <input type="file" id="book-cover" class="file-input">
+                            <label for="book-cover" class="file-input-label">اختر ملفاً</label>
+                            <span class="file-name">لم يتم اختيار ملف</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-description">وصف الكتاب</label>
+                        <textarea id="book-description" class="form-textarea"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn secondary-btn cancel-btn">إلغاء</button>
+                        <button type="submit" class="btn primary-btn">إضافة الكتاب</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
